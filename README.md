@@ -2,7 +2,7 @@
 
 **WebTime Pro** is a Chrome extension designed to help users maximise their productivity on the internet. It offers tools to track time spent on websites, categorise them as productive or unproductive, block distracting sites, and set personal goals.
 
-## 🚀 Features
+## Features
 
 -  Automatically tracks visited websites
 -  Categorise websites as productive or unproductive
