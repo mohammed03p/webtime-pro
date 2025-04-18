@@ -24,10 +24,13 @@
    
    git clone https://github.com/mohammed03p/webtime-pro.git
    cd webtime-pro
+   
 Install dependencies:
 npm install
+
 Build the extension:
 npm run build
+
 Load it into Chrome:
 Go to chrome://extensions
 Enable Developer Mode
@@ -44,9 +47,9 @@ src/
 public/
 manifest.json
 dist/
-📝 Notes
-Changes made in the source files must be rebuilt with npm run build before loading into Chrome.
 
-Don't forget to check and commit changes regularly to keep your work safe.
+
+Notes
+Changes made in the source files must be rebuilt with npm run build before loading into Chrome.
 
 Made by Mohammed Patel
