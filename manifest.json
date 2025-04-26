@@ -12,7 +12,8 @@
     "webNavigation",
     "declarativeNetRequest",
     "declarativeNetRequestFeedback",
-    "alarms"
+    "alarms",
+    "notifications"
   ],
   "host_permissions": [
     "http://*/*",
@@ -20,7 +21,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["blocked.html", "blocked.js"],
+      "resources": ["icons/*", "blocked.html", "blocked.js"],
       "matches": ["<all_urls>"]
     }
   ],

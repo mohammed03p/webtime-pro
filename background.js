@@ -140,5 +140,52 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
+// Check goals every 5 minutes
+setInterval(checkGoalDeadlines, 5 * 60 * 1000);
+
+// Check goal deadlines and notify
+function checkGoalDeadlines() {
+  chrome.storage.local.get("goals", (data) => {
+    const goals = Array.isArray(data.goals) ? data.goals : [];
+    const now = Date.now();
+
+    goals.forEach((goal, index) => {
+      if (!goal.deadline || goal.completed) return; // skip completed
+
+      const deadlineTime = new Date(goal.deadline).getTime();
+      const timeDiff = deadlineTime - now;
+
+      const hoursLeft = timeDiff / (1000 * 60 * 60);
+
+      if (!goal.notified) goal.notified = { "24h": false, "12h": false, "1h": false };
+
+      if (hoursLeft <= 24 && !goal.notified["24h"]) {
+        sendGoalNotification(goal.text, "24 hours left!");
+        goal.notified["24h"] = true;
+      }
+      if (hoursLeft <= 12 && !goal.notified["12h"]) {
+        sendGoalNotification(goal.text, "12 hours left!");
+        goal.notified["12h"] = true;
+      }
+      if (hoursLeft <= 1 && !goal.notified["1h"]) {
+        sendGoalNotification(goal.text, "1 hour left!");
+        goal.notified["1h"] = true;
+      }
+    });
+
+    chrome.storage.local.set({ goals });
+  });
+}
+
+// Helper function to send notification
+function sendGoalNotification(goalText, message) {
+  chrome.notifications.create({
+    type: "basic",
+    iconUrl: "icons/bell.png", // you can replace or add your own small icon
+    title: "Goal Reminder!",
+    message: "Your goal is due soon!"
+  });
+}
+
 // Run on startup
 updateBlockedSites();
