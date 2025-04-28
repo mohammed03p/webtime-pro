@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, nextTick } from "vue";
 import { Chart, registerables } from "chart.js";
 
 Chart.register(...registerables);
@@ -8,35 +8,35 @@ const productiveTime = ref(0);
 const unproductiveTime = ref(0);
 let chartInstance = null;
 
-onMounted(() => {
-  loadAnalytics();
-});
-
-const loadAnalytics = () => {
-  chrome.storage.local.get(["timeLogs", "siteCategories"], (data) => {
-    const timeLogs = data.timeLogs || {};
+// Load and calculate data
+const loadTimeData = () => {
+  chrome.storage.local.get(["siteCategories", "timeLogs"], (data) => {
     const siteCategories = data.siteCategories || {};
+    const timeLogs = data.timeLogs || {};
 
-    productiveTime.value = 0;
-    unproductiveTime.value = 0;
+    let productive = 0;
+    let unproductive = 0;
 
     for (const site in timeLogs) {
-      const timeSpent = timeLogs[site];
       const category = siteCategories[site] || "unclassified";
-
       if (category === "productive") {
-        productiveTime.value += timeSpent;
+        productive += timeLogs[site];
       } else if (category === "unproductive") {
-        unproductiveTime.value += timeSpent;
+        unproductive += timeLogs[site];
       }
     }
 
-    drawChart();
+    productiveTime.value = productive;
+    unproductiveTime.value = unproductive;
+
+    nextTick(() => drawChart()); // draw after DOM is updated
   });
 };
 
+// Create or update the chart
 const drawChart = () => {
-  const ctx = document.getElementById("analyticsChart");
+  const ctx = document.getElementById("timeChart");
+
   if (!ctx) return;
 
   if (chartInstance) {
@@ -46,43 +46,43 @@ const drawChart = () => {
   chartInstance = new Chart(ctx, {
     type: "doughnut",
     data: {
-      labels: ["Productive", "Unproductive"],
+      labels: ["Productive Time", "Unproductive Time"],
       datasets: [{
         data: [productiveTime.value, unproductiveTime.value],
-        backgroundColor: ["#4CAF50", "#FF0000"],
+        backgroundColor: ["#4CAF50", "#FF0000"]
       }]
     },
     options: {
       responsive: true,
-      maintainAspectRatio: false
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom'
+        }
+      }
     }
   });
 };
 
-const formatTime = (seconds) => {
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  return `${hours}h ${minutes}m`;
-};
+onMounted(() => {
+  loadTimeData();
+});
 </script>
 
 <template>
   <div>
     <h3>Analytics</h3>
+    <p><strong>Productive Time:</strong> {{ (productiveTime / 3600).toFixed(2) }} hours</p>
+    <p><strong>Unproductive Time:</strong> {{ (unproductiveTime / 3600).toFixed(2) }} hours</p>
 
-    <div>
-      <p><strong>Productive Time:</strong> {{ formatTime(productiveTime) }}</p>
-      <p><strong>Unproductive Time:</strong> {{ formatTime(unproductiveTime) }}</p>
+    <div style="height: 250px;">
+      <canvas id="timeChart"></canvas>
     </div>
-
-    <canvas id="analyticsChart" width="200" height="200"></canvas>
   </div>
 </template>
 
 <style scoped>
-canvas {
+#timeChart {
   max-width: 100%;
-  height: auto;
-  margin-top: 20px;
 }
 </style>
