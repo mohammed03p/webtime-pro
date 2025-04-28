@@ -1,6 +1,7 @@
 let activeTabId = null;
 let startTime = Date.now();
 let currentUrl = null;
+let currentDay = getTodayDate(); // ✅ track the day
 
 // Update current URL
 function updateCurrentUrl() {
@@ -34,16 +35,13 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 });
 
 // Track website visits
-chrome.webNavigation.onCompleted.addListener(
-  (details) => {
-    if (details.frameId !== 0) return;
-    try {
-      const url = new URL(details.url).hostname;
-      updateSiteCategories(url);
-    } catch (e) {}
-  },
-  { url: [{ schemes: ["http", "https"] }] }
-);
+chrome.webNavigation.onCompleted.addListener((details) => {
+  if (details.frameId !== 0) return;
+  try {
+    const url = new URL(details.url).hostname;
+    updateSiteCategories(url);
+  } catch (e) {}
+}, { url: [{ schemes: ["http", "https"] }] });
 
 // Save site category if missing
 function updateSiteCategories(url) {
@@ -56,7 +54,7 @@ function updateSiteCategories(url) {
   });
 }
 
-// Helper: Today's date string
+// Get today's date string
 function getTodayDate() {
   const now = new Date();
   return now.toISOString().split("T")[0];
@@ -65,8 +63,17 @@ function getTodayDate() {
 // Track time spent
 setInterval(() => {
   if (!activeTabId || !currentUrl) return;
+
+  const nowDay = getTodayDate();
+  if (nowDay !== currentDay) {
+    console.log(`🕛 Day changed from ${currentDay} to ${nowDay}`);
+    startTime = Date.now(); // Reset cleanly
+    currentDay = nowDay;
+  }
+
   const timeSpent = (Date.now() - startTime) / 1000;
   logTime(currentUrl, timeSpent);
+
   startTime = Date.now();
 }, 5000);
 
@@ -95,9 +102,7 @@ function updateBlockingRules() {
         removeRuleIds: existingIds,
         addRules: []
       }, () => {
-        // Generate truly unique IDs starting from a random number
-        const randomStartId = Math.floor(Math.random() * 10000) + 1000; // 1000–10999
-        
+        const randomStartId = Math.floor(Math.random() * 10000) + 1000;
         const newRules = blockedSites.map((site, index) => ({
           id: randomStartId + index,
           priority: 1,
@@ -125,8 +130,6 @@ function updateBlockingRules() {
     });
   });
 }
-
-
 
 // Listen for blockedSites changes
 chrome.storage.onChanged.addListener((changes) => {
