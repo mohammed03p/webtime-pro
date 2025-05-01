@@ -87,16 +87,60 @@ watch(goals, updateCompletedCount, { deep: true });
 ul {
   list-style: none;
   padding: 0;
+  margin-bottom: 20px;
 }
+
 li {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 5px;
+  padding: 10px;
+  margin-bottom: 8px;
+  background-color: #f5f5f5;
+  border-radius: 6px;
+  border-left: 3px solid #ccc;
 }
-input[type="datetime-local"] {
-  margin-left: 10px;
-}
+
 button {
-  margin-left: 10px;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+button:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+}
+
+button[class*="Block"] {
+  background-color: #F44336;
+  color: white;
+}
+
+button[class*="Unblock"] {
+  background-color: #4CAF50;
+  color: white;
+}
+
+h2, h4 {
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-right: 8px;
+  width: calc(100% - 100px);
+}
+
+h4 {
+  margin-top: 24px;
 }
 </style>
