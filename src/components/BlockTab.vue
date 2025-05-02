@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h2>Blocked Sites</h2>
+      <h2>Block Sites</h2>
       <ul>
         <li v-for="site in allSites" :key="site">
           {{ site }}
