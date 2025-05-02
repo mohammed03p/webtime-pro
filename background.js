@@ -1,7 +1,10 @@
 let activeTabId = null;
 let startTime = Date.now();
 let currentUrl = null;
-let currentDay = getTodayDate(); // ✅ track the day
+let currentDay = getTodayDate();
+
+let siteSessionTime = {};
+let siteAlerted = {};
 
 // Update current URL
 function updateCurrentUrl() {
@@ -22,6 +25,12 @@ chrome.tabs.onActivated.addListener((activeInfo) => {
   activeTabId = activeInfo.tabId;
   startTime = Date.now();
   updateCurrentUrl();
+
+  // Reset session tracking when tab changes
+  if (currentUrl) {
+    siteSessionTime[currentUrl] = 0;
+    siteAlerted[currentUrl] = false;
+  }
 });
 
 // Track URL changes
@@ -67,15 +76,41 @@ setInterval(() => {
   const nowDay = getTodayDate();
   if (nowDay !== currentDay) {
     console.log(`🕛 Day changed from ${currentDay} to ${nowDay}`);
-    startTime = Date.now(); // Reset cleanly
+    startTime = Date.now();
     currentDay = nowDay;
   }
 
   const timeSpent = (Date.now() - startTime) / 1000;
   logTime(currentUrl, timeSpent);
-
   startTime = Date.now();
+
+  // Track continuous session time
+  siteSessionTime[currentUrl] = (siteSessionTime[currentUrl] || 0) + timeSpent;
+
+  chrome.storage.local.get("siteCategories", (data) => {
+    const category = (data.siteCategories && data.siteCategories[currentUrl]) || "unclassified";
+
+    
+    if (
+      category === "unproductive" &&
+      siteSessionTime[currentUrl] >= 3600 &&
+      !siteAlerted[currentUrl]
+    ) {
+      sendSiteUsageNotification(currentUrl);
+      siteAlerted[currentUrl] = true;
+    }
+  });
 }, 5000);
+
+// Send warning notification
+function sendSiteUsageNotification(site) {
+  chrome.notifications.create({
+    type: "basic",
+    iconUrl: "icons/bell.png",
+    title: "Unproductive Usage Alert",
+    message: `You've spent 1 hour on ${site}, which is marked unproductive. Time to refocus?`
+  });
+}
 
 // Log time grouped by date
 function logTime(url, timeSpent) {
@@ -97,7 +132,6 @@ function updateBlockingRules() {
 
     chrome.declarativeNetRequest.getDynamicRules((rules) => {
       const existingIds = rules.map(r => r.id);
-
       chrome.declarativeNetRequest.updateDynamicRules({
         removeRuleIds: existingIds,
         addRules: []
@@ -177,7 +211,7 @@ function checkGoalDeadlines() {
   });
 }
 
-// Send notification
+// Send goal reminder
 function sendGoalNotification(goalText, message) {
   chrome.notifications.create({
     type: "basic",

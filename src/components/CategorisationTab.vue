@@ -20,6 +20,11 @@
           :class="['filter-btn', { active: currentFilter === 'unproductive' }]">
           Unproductive
         </button>
+        <button 
+          @click="setFilter('unclassified')" 
+          :class="['filter-btn', { active: currentFilter === 'unclassified' }]">
+          Unclassified
+        </button>
       </div>
     </div>
 
@@ -30,10 +35,12 @@
         class="site-card"
       >
         <div class="site-info">
-          <span class="site-name">{{ site }}</span>
+          <div class="site-name-container">
+            <span class="site-name">{{ site }}</span>
+          </div>
           <span v-if="siteCategories[site]" 
                 :class="['category-badge', siteCategories[site]]">
-            - {{ siteCategories[site].toUpperCase() }} 
+            {{ siteCategories[site].toUpperCase() }} 
             <span v-if="siteCategories[site] === 'productive'" class="icon">✅</span>
             <span v-else-if="siteCategories[site] === 'unproductive'" class="icon">❌</span>
           </span>
@@ -86,6 +93,10 @@ const currentFilter = ref("all");
 const filteredSites = computed(() => {
   if (currentFilter.value === "all") {
     return sites.value;
+  } else if (currentFilter.value === "unclassified") {
+    return sites.value.filter(site => 
+      siteCategories.value[site] === "unclassified" || !siteCategories.value[site]
+    );
   } else {
     return sites.value.filter(site => 
       siteCategories.value[site] === currentFilter.value
@@ -188,6 +199,7 @@ onMounted(loadSites);
 .filter-buttons {
   display: flex;
   gap: 6px;
+  flex-wrap: wrap;
 }
 
 .filter-btn {
@@ -239,13 +251,20 @@ onMounted(loadSites);
   display: flex;
   align-items: center;
   margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.site-name-container {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .site-name {
   font-weight: 600;
   font-size: 15px;
-  word-break: break-word;
-  margin-right: 4px;
 }
 
 .category-badge {
@@ -256,7 +275,6 @@ onMounted(loadSites);
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.5px;
-  margin-left: 4px;
 }
 
 .category-badge.productive {
