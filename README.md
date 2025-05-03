@@ -27,15 +27,19 @@
    git clone https://github.com/mohammed03p/webtime-pro.git
  
 2. Change in to the webtime-pro directory:
+
    cd webtime-pro
    
-3. Install dependencies:
+4. Install dependencies:
+
    npm install
 
-4. Build the extension:
+6. Build the extension:
+
    npm run build
 
-5. Load it into Chrome:
+8. Load it into Chrome:
+
    Go to chrome://extensions
    Enable Developer Mode
    Click Load unpacked
