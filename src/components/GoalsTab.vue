@@ -118,6 +118,10 @@ watch(goals, updateCompletedCount, { deep: true });
       </div>
     </div>
     
+    <div class="description-text">
+      Set and track your goals with deadlines. You'll receive notifications as your deadlines approach to help you stay on track. Check off completed goals to track your progress.
+    </div>
+    
     <div class="add-goal-form">
       <div class="input-group">
         <input 
@@ -130,8 +134,8 @@ watch(goals, updateCompletedCount, { deep: true });
           type="datetime-local" 
           class="date-input"
         />
+        <button @click="addGoal" class="add-button">Add Goal</button>
       </div>
-      <button @click="addGoal" class="add-button">Add Goal</button>
     </div>
 
     <div v-if="goals.length === 0" class="empty-state">
@@ -190,7 +194,7 @@ watch(goals, updateCompletedCount, { deep: true });
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 12px;
 }
 
 .header h3 {
@@ -198,6 +202,13 @@ watch(goals, updateCompletedCount, { deep: true });
   font-weight: 600;
   margin: 0;
   color: #333;
+}
+
+.description-text {
+  margin-bottom: 20px;
+  color: #64748b;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .progress-pill {
@@ -232,7 +243,6 @@ watch(goals, updateCompletedCount, { deep: true });
 
 .add-goal-form {
   display: flex;
-  gap: 8px;
   margin-bottom: 20px;
 }
 
@@ -268,8 +278,9 @@ watch(goals, updateCompletedCount, { deep: true });
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
-  align-self: flex-end;
   height: 42px;
+  width: 100%;
+  margin-top: 4px;
 }
 
 .add-button:hover {

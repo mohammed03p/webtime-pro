@@ -27,8 +27,8 @@
           placeholder="Enter site URL (e.g., facebook.com)" 
           class="site-input"
         />
-        <button @click="blockSiteManually" class="block-btn toggle-button">Block</button>
       </div>
+      <button @click="blockSiteManually" class="block-btn toggle-button block-manual-button">Block</button>
     </div>
   </div>
 </template>
@@ -211,7 +211,8 @@ onMounted(loadSites);
 
 .input-group {
   display: flex;
-  gap: 10px;
+  margin-bottom: 10px;
+  width: 100%;
 }
 
 .site-input {
@@ -220,10 +221,17 @@ onMounted(loadSites);
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
+  width: 100%;
 }
 
 .site-input:focus {
   outline: none;
   border-color: #2196f3;
+}
+
+.block-manual-button {
+  margin-top: 5px;
+  height: 36px;
+  width: 100px;
 }
 </style>
