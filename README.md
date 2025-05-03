@@ -26,7 +26,7 @@
    
    git clone https://github.com/mohammed03p/webtime-pro.git
  
-2. Change in to the webtime-pro directory
+2. Change in to the webtime-pro directory:
    cd webtime-pro
    
 3. Install dependencies:
