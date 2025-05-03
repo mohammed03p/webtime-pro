@@ -29,6 +29,20 @@ const last7Dates = [...Array(7)].map((_, i) => {
   return d.toISOString().split("T")[0];
 });
 
+// Format time to hours and minutes
+const formatTime = (seconds) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  
+  if (hours === 0) {
+    return `${minutes} mins`;
+  } else if (minutes === 0) {
+    return `${hours} hrs`;
+  } else {
+    return `${hours} hrs ${minutes} mins`;
+  }
+};
+
 // Load time data
 const loadTimeData = () => {
   chrome.storage.local.get(["siteCategories", "timeLogs"], (data) => {
@@ -118,34 +132,119 @@ onMounted(loadTimeData);
 </script>
 
 <template>
-  <div>
-    <h3>Analytics</h3>
-
-    <h4>Total Time</h4>
-    <p><strong>Productive:</strong> {{ (productiveTime / 3600).toFixed(2) }} hours</p>
-    <p><strong>Unproductive:</strong> {{ (unproductiveTime / 3600).toFixed(2) }} hours</p>
-    <div style="height: 250px;">
-      <canvas id="totalChart"></canvas>
+  <div class="analytics-tab">
+    <h3 class="tab-title">Analytics</h3>
+    
+    <div class="tab-description">
+      This tab shows graphs of your time spent on productive and unproductive websites.
+      There are three visualisations available: daily usage, the last 7 days, and your total time tracked.
     </div>
 
-    <h4>Today's Time</h4>
-    <p><strong>Productive:</strong> {{ (productiveToday / 3600).toFixed(2) }} hours</p>
-    <p><strong>Unproductive:</strong> {{ (unproductiveToday / 3600).toFixed(2) }} hours</p>
-    <div style="height: 250px;">
-      <canvas id="todayChart"></canvas>
+    <div class="time-section">
+      <h4>Today's Time</h4>
+      <div class="time-stats">
+        <p><strong>Productive:</strong> {{ formatTime(productiveToday) }}</p>
+        <p><strong>Unproductive:</strong> {{ formatTime(unproductiveToday) }}</p>
+      </div>
+      <div class="chart-container">
+        <canvas id="todayChart"></canvas>
+      </div>
     </div>
 
-    <h4>Last 7 Days</h4>
-    <p><strong>Productive:</strong> {{ (productiveWeekly / 3600).toFixed(2) }} hours</p>
-    <p><strong>Unproductive:</strong> {{ (unproductiveWeekly / 3600).toFixed(2) }} hours</p>
-    <div style="height: 250px;">
-      <canvas id="weekChart"></canvas>
+    <div class="time-section">
+      <h4>Last 7 Days</h4>
+      <div class="time-stats">
+        <p><strong>Productive:</strong> {{ formatTime(productiveWeekly) }}</p>
+        <p><strong>Unproductive:</strong> {{ formatTime(unproductiveWeekly) }}</p>
+      </div>
+      <div class="chart-container">
+        <canvas id="weekChart"></canvas>
+      </div>
+    </div>
+
+    <div class="time-section">
+      <h4>Total Time</h4>
+      <div class="time-stats">
+        <p><strong>Productive:</strong> {{ formatTime(productiveTime) }}</p>
+        <p><strong>Unproductive:</strong> {{ formatTime(unproductiveTime) }}</p>
+      </div>
+      <div class="chart-container">
+        <canvas id="totalChart"></canvas>
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
+.analytics-tab {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 16px;
+  max-width: 100%;
+  color: #333;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.tab-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #2c3e50;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #eaeaea;
+}
+
+.tab-description {
+  margin-bottom: 20px;
+  line-height: 1.5;
+  color: #555;
+  background-color: #e6f2ff;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  border-left: 4px solid #4285F4;
+}
+
+.time-section {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.time-section h4 {
+  margin-top: 0;
+  color: #2c3e50;
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.time-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 10px;
+}
+
+.time-stats p {
+  margin: 0;
+  font-size: 15px;
+}
+
+.chart-container {
+  height: 250px;
+  position: relative;
+}
+
 canvas {
   max-width: 100%;
+}
+
+@media (max-width: 480px) {
+  .time-stats {
+    flex-direction: column;
+    gap: 8px;
+  }
 }
 </style>

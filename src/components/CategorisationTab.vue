@@ -2,6 +2,11 @@
   <div class="categorisation-tab">
     <h3 class="tab-title">Site Categorisation</h3>
 
+    <div class="tab-description">
+      This tab tracks all sites you visit and allows you to categorise them as productive or unproductive. 
+      You can remove sites you don't recognise or only visited once, and manually add new sites you want to categorise.
+    </div>
+
     <div class="filter-controls">
       <div class="filter-label">Filter by:</div>
       <div class="filter-buttons">
