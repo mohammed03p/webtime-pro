@@ -40,9 +40,9 @@
 
 8. Load it into Chrome:
 
-   Go to chrome://extensions
-   Enable Developer Mode
-   Click Load unpacked
+   Go to chrome://extensions,
+   Enable Developer Mode,
+   Click Load unpacked,
    Select the Webtime Pro folder
 
 Notes
