@@ -45,6 +45,31 @@
    Click Load unpacked,
    Select the Webtime Pro folder
 
+
+**If extension fails to load:**
+
+   Upon running npm run build in your terminal you will see two files have been generated:
+
+   they will look something like this: main-XXXXXX.js and main-XXXXX.css.
+
+   please check in your webtime pro folder, in the dist folder if they are the same
+
+   if they are different, then open up popup.html in your code editor
+
+   and replace the main-XXXXX.js file from ur terminal with the main-XXXX.js file that is shown in the popup.html file
+
+   and repeat the same for the main-XXXX.css files.
+
+
+
+   This issue only occured once duirng user testing, 9 users had no problems with this only 1 did. This was the the way to fix.
+
+
+
+
+
+
+    
 Notes
 Changes made in the source files must be rebuilt with npm run build before loading into Chrome.
 
