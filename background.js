@@ -75,7 +75,7 @@ setInterval(() => {
 
   const nowDay = getTodayDate();
   if (nowDay !== currentDay) {
-    console.log(`🕛 Day changed from ${currentDay} to ${nowDay}`);
+    console.log(`Day changed from ${currentDay} to ${nowDay}`);
     startTime = Date.now();
     currentDay = nowDay;
   }
